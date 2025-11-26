@@ -38,10 +38,11 @@ EOF
 service nginx restart
 
 # 5. Uruchomienie PHP-FPM w tle
-# Używamy ogólnego polecenia, które powinno odwołać się do wersji 8.4
+echo "INFO: Attempting to start PHP-FPM..." 
 /usr/sbin/php-fpm -D
-# Jeśli to zawiedzie, użyj dokładnie tej wersji, którą widać na starcie:
-# /usr/sbin/php-fpm8.4 -D 
+
+# 6. Upewnij się, że działa, zanim przejdziesz do tail -f
+echo "INFO: PHP-FPM start command executed. Check Log Stream for FPM errors."
 
 # 6. Utrzymanie skryptu w działaniu, aby kontener nie został zatrzymany
 tail -f /dev/null
