@@ -39,7 +39,7 @@ service nginx restart
 
 # 5. Uruchomienie PHP-FPM w tle
 echo "INFO: Attempting to start PHP-FPM..." 
-/usr/sbin/php-fpm -D
+/usr/local/sbin/php-fpm -D
 
 # 6. Upewnij się, że działa, zanim przejdziesz do tail -f
 echo "INFO: PHP-FPM start command executed. Check Log Stream for FPM errors."
