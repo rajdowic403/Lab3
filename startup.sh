@@ -1,13 +1,20 @@
-!/bin/bash
-# Zainstalowanie zależności Laravela
-composer install --no-dev --prefer-dist
-php artisan config:clear
-# Uruchomienie migracji (ostrożnie! --force jest dozwolone tylko w środowisku non-interactive)
-# php artisan migrate --force
+#!/bin/sh
+# W App Service na Linuxie, /bin/sh jest bardziej niezawodny niż /bin/bash
 
-# Konfiguracja NGINX, aby wskazywał na public/
-# Tworzenie niestandardowego pliku konfiguracyjnego NGINX
-echo "server {
+# Nie uruchamiamy "composer install" w skrypcie startowym (bo go nie ma)
+# Zamiast tego polegamy na tym, że katalog vendor zostal wgrany (co już zrobiłeś)
+
+# 1. Zapewnienie, że cache Laravela jest czysty przy starcie
+# Ta linia rozwiązuje problem z niestabilnością ścieżek widoków
+php artisan config:clear
+
+# 2. Ustawienie uprawnień dla storage i cache
+chmod -R 777 storage bootstrap/cache
+
+# 3. Kopiowanie niestandardowej konfiguracji NGINX (aby wskazać public/)
+# Zastąp domyślną konfigurację App Service
+cat > /etc/nginx/sites-enabled/default <<EOF
+server {
     listen 8080;
     root /home/site/wwwroot/public;
     index index.php index.html index.htm;
@@ -24,11 +31,17 @@ echo "server {
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param PATH_INFO \$fastcgi_path_info;
     }
-}" > /etc/nginx/sites-enabled/default
-    
+}
+EOF
 
+# 4. Restart Nginx
 service nginx restart
 
+# 5. Uruchomienie PHP-FPM w tle
+# Używamy ogólnego polecenia, które powinno odwołać się do wersji 8.4
+/usr/sbin/php-fpm -D
+# Jeśli to zawiedzie, użyj dokładnie tej wersji, którą widać na starcie:
+# /usr/sbin/php-fpm8.4 -D 
 
-
+# 6. Utrzymanie skryptu w działaniu, aby kontener nie został zatrzymany
 tail -f /dev/null
