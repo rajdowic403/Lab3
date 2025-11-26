@@ -1,7 +1,7 @@
 !/bin/bash
 # Zainstalowanie zależności Laravela
 composer install --no-dev --prefer-dist
-
+php artisan config:clear
 # Uruchomienie migracji (ostrożnie! --force jest dozwolone tylko w środowisku non-interactive)
 # php artisan migrate --force
 
@@ -26,9 +26,9 @@ echo "server {
     }
 }" > /etc/nginx/sites-enabled/default
     
-# Uruchomienie NGINX i PHP-FPM
-service nginx restart
-/usr/sbin/php-fpm7.x -D # Pamiętaj o wersji PHP!
 
-# Utrzymanie skryptu w działaniu
+service nginx restart
+/usr/sbin/php-fpm8.4 -D 
+
+
 tail -f /dev/null
