@@ -28,7 +28,7 @@ echo "server {
     
 
 service nginx restart
-/usr/sbin/php-fpm8.4 -D 
+
 
 
 tail -f /dev/null
