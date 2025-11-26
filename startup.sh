@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 # Zainstalowanie zależności Laravela
 composer install --no-dev --prefer-dist
 
